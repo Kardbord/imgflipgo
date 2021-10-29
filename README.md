@@ -1,2 +1,2 @@
 # imgflipgo
-(Golang) Go bindings for the imgflip API
+(Golang) Go bindings for the [imgflip API](https://imgflip.com/api).

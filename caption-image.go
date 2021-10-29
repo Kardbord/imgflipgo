@@ -1,5 +1,13 @@
 package imgflipgo
 
+import (
+	"bytes"
+	"encoding/json"
+	"errors"
+	"io"
+	"net/http"
+)
+
 const CaptionMemeEndpoint = "https://api.imgflip.com/caption_image"
 
 type Font string
@@ -87,4 +95,37 @@ type CaptionResponse struct {
 	} `json:"data,omitempty"`
 
 	ErrorMsg string `json:"error_message,omitempty"`
+}
+
+// TODO: finish unit testing this
+func CaptionImage(req *CaptionRequest) (*CaptionResponse, error) {
+	if req == nil {
+		return nil, errors.New("nil request provided")
+	}
+
+	postBody, err := json.Marshal(req)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.Post(CaptionMemeEndpoint, "application/json", bytes.NewBuffer(postBody))
+	if err != nil {
+		return nil, err
+	}
+	if resp == nil {
+		return nil, errors.New("nil response received")
+	}
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	captionResponse := CaptionResponse{}
+	err = json.Unmarshal(respBody, &captionResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return &captionResponse, nil
 }

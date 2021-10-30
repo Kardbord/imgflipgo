@@ -46,6 +46,11 @@ func TestCaptionImageNilRequest(t *testing.T) {
 	expectNilResponse(t, resp)
 }
 
+func TestCaptionImageEmptyRequest(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{})
+	expectUnsuccessfulNoErr(t, resp, err)
+}
+
 func TestCaptionImageNoUser(t *testing.T) {
 	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
@@ -65,6 +70,19 @@ func TestCaptionImageNoPW(t *testing.T) {
 func TestCaptionImageNoUserOrPW(t *testing.T) {
 	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
+		TopText:    "FOO",
+		BottomText: "BAR",
+	})
+	expectUnsuccessfulNoErr(t, resp, err)
+}
+
+func TestCaptionImageInvalidAuth(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   "not_a_real_user_1234u173829",
+		Password:   "asdf",
+		TopText:    "TOP TEXT",
+		BottomText: "BOTTOM TEXT",
 	})
 	expectUnsuccessfulNoErr(t, resp, err)
 }

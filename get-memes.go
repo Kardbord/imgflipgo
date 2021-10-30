@@ -27,7 +27,7 @@ type MemesResponse struct {
 	} `json:"data,omitempty"`
 }
 
-func GetMemesResponse() (*MemesResponse, error) {
+func GetMemesWithResponse() (*MemesResponse, error) {
 	resp, err := http.Get(GetMemesEndpoint)
 	if err != nil {
 		return nil, err
@@ -52,12 +52,15 @@ func GetMemesResponse() (*MemesResponse, error) {
 }
 
 func GetMemes() ([]Meme, error) {
-	memesResp, err := GetMemesResponse()
+	memesResp, err := GetMemesWithResponse()
 	if err != nil {
 		return nil, err
 	}
 	if memesResp == nil {
 		return nil, errors.New("nil response received")
+	}
+	if !memesResp.Success {
+		return nil, errors.New("request was unsuccessful")
 	}
 	return memesResp.Data.Memes, nil
 }

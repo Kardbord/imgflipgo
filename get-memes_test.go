@@ -7,7 +7,7 @@ import (
 )
 
 func TestGetMemesResponse(t *testing.T) {
-	memesResp, err := imgflipgo.GetMemesResponse()
+	memesResp, err := imgflipgo.GetMemesWithResponse()
 	if err != nil {
 		t.Fatal(err)
 	}

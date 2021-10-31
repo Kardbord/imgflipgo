@@ -222,3 +222,107 @@ func TestCaptionImageBottomTextbox(t *testing.T) {
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
+
+func TestCaptionmageTextBoxes(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+		TextBoxes: []imgflipgo.TextBox{
+			{
+				Text: "Top Text",
+			},
+			{
+				Text: "Bottom Text",
+			},
+		},
+	})
+	expectSuccess(t, resp, err)
+	t.Logf("See test image at %s", resp.Data.URL)
+}
+
+func TestCaptionImageTopBottomAndBoxes(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+		TopText:    "This text should not be displayed (top)",
+		BottomText: "This text should not be displayed (bottom)",
+		TextBoxes: []imgflipgo.TextBox{
+			{
+				Text: "Top Text",
+			},
+			{
+				Text: "Bottom Text",
+			},
+		},
+	})
+	expectSuccess(t, resp, err)
+	t.Logf("See test image at %s", resp.Data.URL)
+}
+
+func TestCaptionImageTopAndBox(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+		TopText:    "This text should not be displayed (top)",
+		TextBoxes: []imgflipgo.TextBox{
+			{
+				Text: "Top Text",
+			},
+		},
+	})
+	expectSuccess(t, resp, err)
+	t.Logf("See test image at %s", resp.Data.URL)
+}
+
+func TestCaptionImageBottomAndBox(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+		BottomText: "This text should not be displayed (bottom)",
+		TextBoxes: []imgflipgo.TextBox{
+			{},
+			{
+				Text: "Bottom Text",
+			},
+		},
+	})
+	expectSuccess(t, resp, err)
+	t.Logf("See test image at %s", resp.Data.URL)
+}
+
+func TestCaptionImageTopAndBottomBox(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+		TopText:    "This text should not be displayed (top)",
+		TextBoxes: []imgflipgo.TextBox{
+			{},
+			{
+				Text: "Bottom Text",
+			},
+		},
+	})
+	expectSuccess(t, resp, err)
+	t.Logf("See test image at %s", resp.Data.URL)
+}
+
+func TestCaptionImageBottomAndTopBox(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+		BottomText: "This text should not be displayed (bottom)",
+		TextBoxes: []imgflipgo.TextBox{
+			{
+				Text: "Top Text",
+			},
+		},
+	})
+	expectSuccess(t, resp, err)
+	t.Logf("See test image at %s", resp.Data.URL)
+}

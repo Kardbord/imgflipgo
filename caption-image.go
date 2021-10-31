@@ -21,29 +21,51 @@ type Font string
 // to settings provided by imgflip.com/memegenerator.
 type TextBox struct {
 	// Text to be displayed
-	Text string `schema:"text,omitempty"`
+	Text string `json:"text,omitempty"`
 
 	// [optional] X coord of of the top left corner of the TextBox
 	// If specified, must also specify Y, Width, Height
-	X uint `schema:"x,omitempty"`
+	X uint `json:"x,omitempty"`
 
 	// [optional] Y coord of of the top left corner of the TextBox
 	// If specified, must also specify X, Width, Height
-	Y uint `schema:"y,omitempty"`
+	Y uint `json:"y,omitempty"`
 
 	// [optional] width of the TextBox
 	// If specified, must also specify X, Y, Height
-	Width uint `schema:"width,omitempty"`
+	Width uint `json:"width,omitempty"`
 
 	// [optional] height of the TextBox
 	// If specified, must also specify X, Y, Width
-	Height uint `schema:"height,omitempty"`
+	Height uint `json:"height,omitempty"`
 
 	// [optional] Hex color for Text
-	Color uint `schema:"color,omitempty"`
+	Color uint `json:"color,omitempty"`
 
 	// [optional] Hex color for Text outline
-	OutlineColor uint `schema:"outline_color,omitempty"`
+	OutlineColor uint `json:"outline_color,omitempty"`
+}
+
+func (t *TextBox) TextJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(t), "Text")
+}
+func (t *TextBox) XJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(t), "X")
+}
+func (t *TextBox) YJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(t), "Y")
+}
+func (t *TextBox) WidthJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(t), "Width")
+}
+func (t *TextBox) HeightJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(t), "Height")
+}
+func (t *TextBox) ColorJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(t), "Color")
+}
+func (t *TextBox) OutlineColorTextJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(t), "OutlineColor")
 }
 
 const (
@@ -58,28 +80,28 @@ type CaptionRequest struct {
 	// returned from the get_memes response should work for this parameter. For
 	// custom template uploads, the template ID can be found in the memegenerator
 	// URL, e.g. https://imgflip.com/memegenerator/14859329/Charlie-Sheen-DERP.
-	TemplateID string `schema:"template_id,omitempty"`
+	TemplateID string `schema:"template_id,omitempty" json:"template_id,omitempty"`
 
 	// Username of a valid imgflip account. This is used to track where API
 	// requests are coming from.
-	Username string `schema:"username,omitempty"`
+	Username string `schema:"username,omitempty" json:"username,omitempty"`
 
 	// Password for the imgflip account.
-	Password string `schema:"password,omitempty"`
+	Password string `schema:"password,omitempty" json:"password,omitempty"`
 
 	// Top text for the meme. Do not use this parameter if you are using the
 	// boxes parameter below.
-	TopText string `schema:"text0,omitempty"`
+	TopText string `schema:"text0,omitempty" json:"text0,omitempty"`
 
 	// Bottom text for the meme. Do not use this parameter if you are using the
 	// boxes parameter below.
-	BottomText string `schema:"text1,omitempty"`
+	BottomText string `schema:"text1,omitempty" json:"text1,omitempty"`
 
 	// [optional] The font family to use for the text
-	Font Font `schema:"font,omitempty"`
+	Font Font `schema:"font,omitempty" json:"font,omitempty"`
 
 	// [optional] Maximum font size in pixels. Defaults to 50px.
-	MaxFontSizePx uint `schema:"max_font_size,omitempty"`
+	MaxFontSizePx uint `schema:"max_font_size,omitempty" json:"max_font_size,omitempty"`
 
 	// [optional] For creating memes with more than two text boxes, or for further
 	// customization. If TextBoxes is specified, TopText and BototmText will be ignored,
@@ -88,7 +110,32 @@ type CaptionRequest struct {
 	// The API is currently limited to 20 text boxes per image. The first TextBox in
 	// the list may be left empty so that the second box will automatically be used
 	// as bottom text.
-	TextBoxes []TextBox `schema:"boxes,omitempty"`
+	TextBoxes []TextBox `schema:"-" json:"boxes,omitempty"`
+}
+
+func (cr *CaptionRequest) TemplateIDJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "TemplateID")
+}
+func (cr *CaptionRequest) UsernameJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "Username")
+}
+func (cr *CaptionRequest) PasswordJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "Password")
+}
+func (cr *CaptionRequest) TopTextJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "TopText")
+}
+func (cr *CaptionRequest) BottomTextJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "BottomText")
+}
+func (cr *CaptionRequest) FontJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "Font")
+}
+func (cr *CaptionRequest) MaxFontSizePxJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "MaxFontSizePx")
+}
+func (cr *CaptionRequest) TextBoxesJSONTag() (string, error) {
+	return getStructFieldJSONTag(reflect.TypeOf(cr), "TextBoxes")
 }
 
 var encoder schema.Encoder
@@ -98,16 +145,68 @@ func init() {
 	encoder.RegisterEncoder(CaptionRequest{}.Font, func(value reflect.Value) string {
 		return value.String()
 	})
-	encoder.RegisterEncoder(CaptionRequest{}.TextBoxes, func(value reflect.Value) string {
-		return fmt.Sprint(value.Interface())
-	})
 }
 
-func (cr CaptionRequest) CreateHTTPParams() (url.Values, error) {
+func (cr CaptionRequest) CreateHTTPFormBody() (url.Values, error) {
 	form := url.Values{}
 	err := encoder.Encode(cr, form)
 	if err != nil {
 		return form, err
+	}
+
+	// Have to encode TextBoxes manually because gorilla/schema doesn't handle
+	// slices of custom structs (or if it does I'm too dumb to figure out how).
+	textBoxesJSONTag, err := cr.TextBoxesJSONTag()
+	if err != nil {
+		return form, err
+	}
+
+	var textJSONTag string
+	var xJSONTag string
+	var yJSONTag string
+	var widthJSONTag string
+	var heightJSONTag string
+	var colorJSONTag string
+	var outlineColorJSONTag string
+	for i := range cr.TextBoxes {
+		if i == 0 {
+			textJSONTag, err = cr.TextBoxes[i].TextJSONTag()
+			if err != nil {
+				return form, err
+			}
+			xJSONTag, err = cr.TextBoxes[i].XJSONTag()
+			if err != nil {
+				return form, err
+			}
+			yJSONTag, err = cr.TextBoxes[i].YJSONTag()
+			if err != nil {
+				return form, err
+			}
+			widthJSONTag, err = cr.TextBoxes[i].WidthJSONTag()
+			if err != nil {
+				return form, err
+			}
+			heightJSONTag, err = cr.TextBoxes[i].HeightJSONTag()
+			if err != nil {
+				return form, err
+			}
+			colorJSONTag, err = cr.TextBoxes[i].ColorJSONTag()
+			if err != nil {
+				return form, err
+			}
+			outlineColorJSONTag, err = cr.TextBoxes[i].OutlineColorTextJSONTag()
+			if err != nil {
+				return form, err
+			}
+		}
+
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, textJSONTag), cr.TextBoxes[i].Text)
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, xJSONTag), fmt.Sprint(cr.TextBoxes[i].X))
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, yJSONTag), fmt.Sprint(cr.TextBoxes[i].Y))
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, widthJSONTag), fmt.Sprint(cr.TextBoxes[i].Width))
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, heightJSONTag), fmt.Sprint(cr.TextBoxes[i].Height))
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, colorJSONTag), fmt.Sprint(cr.TextBoxes[i].Color))
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, outlineColorJSONTag), fmt.Sprint(cr.TextBoxes[i].OutlineColor))
 	}
 
 	return form, nil
@@ -128,7 +227,7 @@ func CaptionImage(req *CaptionRequest) (*CaptionResponse, error) {
 		return nil, errors.New("nil request provided")
 	}
 
-	form, err := req.CreateHTTPParams()
+	form, err := req.CreateHTTPFormBody()
 	if err != nil {
 		return nil, err
 	}

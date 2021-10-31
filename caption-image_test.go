@@ -32,7 +32,7 @@ func setup() {
 
 func expectNilError(t *testing.T, err error) {
 	if err != nil {
-		t.Fatalf("Expected nil error, got %v", err)
+		t.Fatalf("Expected nil error, err=%v", err)
 	}
 }
 
@@ -44,7 +44,7 @@ func expectNonNilError(t *testing.T, err error) {
 
 func expectNilResponse(t *testing.T, resp *imgflipgo.CaptionResponse) {
 	if resp != nil {
-		t.Fatalf("Expected nil response, got %v", resp)
+		t.Fatalf("Expected nil response, resp=%v", resp)
 	}
 }
 

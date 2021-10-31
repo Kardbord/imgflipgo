@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    - cron: '35 21 * * 3'
+    - cron: "35 21 * * 3"
 
 jobs:
   build:
@@ -28,3 +28,6 @@ jobs:
 
       - name: Test
         run: go test -v ./...
+        env:
+          IMGFLIP_API_USERNAME: ${{ secrets.IMGFLIP_API_USERNAME }}
+          IMGFLIP_API_PASSWORD: ${{ secrets.IMGFLIP_API_PASSWORD }}

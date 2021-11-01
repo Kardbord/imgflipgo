@@ -31,3 +31,6 @@ jobs:
         env:
           IMGFLIP_API_USERNAME: ${{ secrets.IMGFLIP_API_USERNAME }}
           IMGFLIP_API_PASSWORD: ${{ secrets.IMGFLIP_API_PASSWORD }}
+
+      - name: Build Example
+        run: cd example ; go build -v ./...

@@ -222,35 +222,45 @@ type CaptionResponse struct {
 	ErrorMsg string `json:"error_message,omitempty"`
 }
 
-func CaptionImage(req *CaptionRequest) (*CaptionResponse, error) {
+// CaptionImage wraps the caption_image endpoint. It makes a request using the provided
+// parameters, and will return an error if something goes wrong at any point during the
+// process. The errors can come originate in Go or be from the API, depending on where
+// the failure occurred. This was done so that the caller does not have to check both
+// the returned error value, AND CaptionResponse.Success. If the API returns an error,
+// it will be reflected in both CaptionResponse.ErrorMsg and in the returned Go error.
+func CaptionImage(req *CaptionRequest) (CaptionResponse, error) {
 	if req == nil {
-		return nil, errors.New("nil request provided")
+		return CaptionResponse{Success: false, ErrorMsg: "nil request provided"}, errors.New("nil request provided")
 	}
 
 	form, err := req.CreateHTTPFormBody()
 	if err != nil {
-		return nil, err
+		return CaptionResponse{Success: false, ErrorMsg: fmt.Sprint(err)}, err
 	}
 
 	resp, err := http.PostForm(CaptionMemeEndpoint, form)
 	if err != nil {
-		return nil, err
+		return CaptionResponse{Success: false, ErrorMsg: fmt.Sprint(err)}, err
 	}
 	if resp == nil {
-		return nil, errors.New("nil response received")
+		return CaptionResponse{Success: false, ErrorMsg: "nil response received"}, errors.New("nil response received")
 	}
 	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return CaptionResponse{Success: false, ErrorMsg: fmt.Sprint(err)}, err
 	}
 
 	captionResponse := CaptionResponse{}
 	err = json.Unmarshal(respBody, &captionResponse)
 	if err != nil {
-		return nil, err
+		return CaptionResponse{Success: false, ErrorMsg: fmt.Sprint(err)}, err
 	}
 
-	return &captionResponse, nil
+	if !captionResponse.Success {
+		return captionResponse, errors.New(captionResponse.ErrorMsg)
+	}
+
+	return captionResponse, nil
 }

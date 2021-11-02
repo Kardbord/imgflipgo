@@ -59,9 +59,6 @@ func main() {
 	if err != nil {
 		fmt.Printf("Caption request failed, err=%v\n", err)
 	}
-	if !response.Success {
-		fmt.Printf("Caption request failed, err=%s\n", response.ErrorMsg)
-	}
 
 	fmt.Printf("View your captioned image at %s\n", response.Data.URL)
 }

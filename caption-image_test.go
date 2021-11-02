@@ -1,6 +1,7 @@
 package imgflipgo_test
 
 import (
+	"fmt"
 	"math/rand"
 	"os"
 	"testing"
@@ -30,57 +31,52 @@ func setup() {
 	ImgflipAPIPassword, _ = os.LookupEnv(ImgflipAPIPasswordEnv)
 }
 
-func expectNilError(t *testing.T, err error) {
-	if err != nil {
-		t.Fatalf("Expected nil error, err=%v", err)
-	}
-}
-
-func expectNonNilError(t *testing.T, err error) {
-	if err == nil {
-		t.Fatal("Expected non-nil error")
-	}
-}
-
-func expectNilResponse(t *testing.T, resp *imgflipgo.CaptionResponse) {
-	if resp != nil {
-		t.Fatalf("Expected nil response, resp=%v", resp)
-	}
-}
-
-func expectNonNilResponse(t *testing.T, resp *imgflipgo.CaptionResponse) {
-	if resp == nil {
-		t.Fatal("Expected non-nil response")
-	}
-}
-
-func expectUnsuccessfulNoErr(t *testing.T, resp *imgflipgo.CaptionResponse, err error) {
-	expectNilError(t, err)
-	expectNonNilResponse(t, resp)
-	if resp.Success {
-		t.Fatal("Expected request to fail")
-	}
-}
-
-func expectSuccess(t *testing.T, resp *imgflipgo.CaptionResponse, err error) {
-	expectNilError(t, err)
-	expectNonNilResponse(t, resp)
-	if !resp.Success {
-		t.Fatalf("Expected request to succeed, err=%s", resp.ErrorMsg)
-	}
-}
-
 const testTemplateID = "181913649"
+
+func expectSuccess(t *testing.T, resp imgflipgo.CaptionResponse, err error) {
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !resp.Success {
+		t.Fatal("Expected successful query, err=", resp.ErrorMsg)
+	}
+	if resp.ErrorMsg != "" {
+		t.Fatal("Did not expecte an error. ErrorMsg=", resp.ErrorMsg)
+	}
+	if resp.Data.URL == "" && resp.Data.PageURL == "" {
+		t.Fatal("Response URLs should not both be empty")
+	}
+}
+
+func expectFailure(t *testing.T, resp imgflipgo.CaptionResponse, err error) {
+	if err == nil {
+		t.Fatal("Expected an error")
+	}
+	if resp.Success {
+		t.Fatal("Expected an error")
+	}
+	if resp.ErrorMsg == "" {
+		t.Fatal("Expected a non-empty ErrorMsg")
+	}
+	if fmt.Sprint(err) == "" {
+		t.Fatal("Expected a non-empty ErrorMsg")
+	}
+	if resp.ErrorMsg != fmt.Sprint(err) {
+		t.Fatalf("returned error and ErrorMsg strings should be equivalent, but %s != %s", resp.ErrorMsg, err)
+	}
+	if resp.Data.PageURL != "" || resp.Data.URL != "" {
+		t.Fatalf("Did not expect response URLs to be populated; PageURL=%s URL=%s", resp.Data.PageURL, resp.Data.URL)
+	}
+}
 
 func TestCaptionImageNilRequest(t *testing.T) {
 	resp, err := imgflipgo.CaptionImage(nil)
-	expectNonNilError(t, err)
-	expectNilResponse(t, resp)
+	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageEmptyRequest(t *testing.T) {
 	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{})
-	expectUnsuccessfulNoErr(t, resp, err)
+	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageNoUser(t *testing.T) {
@@ -88,7 +84,7 @@ func TestCaptionImageNoUser(t *testing.T) {
 		TemplateID: testTemplateID,
 		Password:   "asdf",
 	})
-	expectUnsuccessfulNoErr(t, resp, err)
+	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageNoPW(t *testing.T) {
@@ -96,7 +92,7 @@ func TestCaptionImageNoPW(t *testing.T) {
 		TemplateID: testTemplateID,
 		Username:   "asdf",
 	})
-	expectUnsuccessfulNoErr(t, resp, err)
+	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageNoUserOrPW(t *testing.T) {
@@ -105,7 +101,7 @@ func TestCaptionImageNoUserOrPW(t *testing.T) {
 		TopText:    "FOO",
 		BottomText: "BAR",
 	})
-	expectUnsuccessfulNoErr(t, resp, err)
+	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageInvalidAuth(t *testing.T) {
@@ -116,7 +112,7 @@ func TestCaptionImageInvalidAuth(t *testing.T) {
 		TopText:    "TOP TEXT",
 		BottomText: "BOTTOM TEXT",
 	})
-	expectUnsuccessfulNoErr(t, resp, err)
+	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageTopTextOnly(t *testing.T) {

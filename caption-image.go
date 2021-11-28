@@ -40,10 +40,10 @@ type TextBox struct {
 	Height uint `json:"height,omitempty"`
 
 	// [optional] Hex color for Text
-	Color uint `json:"color,omitempty"`
+	Color uint `json:"color"`
 
 	// [optional] Hex color for Text outline
-	OutlineColor uint `json:"outline_color,omitempty"`
+	OutlineColor uint `json:"outline_color"`
 }
 
 func (t *TextBox) TextJSONTag() (string, error) {
@@ -205,8 +205,8 @@ func (cr CaptionRequest) CreateHTTPFormBody() (url.Values, error) {
 		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, yJSONTag), fmt.Sprint(cr.TextBoxes[i].Y))
 		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, widthJSONTag), fmt.Sprint(cr.TextBoxes[i].Width))
 		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, heightJSONTag), fmt.Sprint(cr.TextBoxes[i].Height))
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, colorJSONTag), fmt.Sprintf("#%x", cr.TextBoxes[i].Color))
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, outlineColorJSONTag), fmt.Sprintf("#%x", cr.TextBoxes[i].OutlineColor))
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, colorJSONTag), fmt.Sprintf("#%06x", cr.TextBoxes[i].Color))
+		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, outlineColorJSONTag), fmt.Sprintf("#%06x", cr.TextBoxes[i].OutlineColor))
 	}
 
 	return form, nil

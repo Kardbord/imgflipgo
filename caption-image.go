@@ -183,7 +183,7 @@ var encoder schema.Encoder
 func init() {
 	encoder = *schema.NewEncoder()
 	encoder.RegisterEncoder(CaptionRequest{}.Font, func(value reflect.Value) string {
-		return value.String()
+		return value.Elem().String()
 	})
 }
 

@@ -79,8 +79,8 @@ func inputCaptions(template imgflipgo.Meme) []imgflipgo.TextBox {
 		fmt.Printf("Enter a caption for box #%d: ", i+1)
 		input, _ := reader.ReadString('\n')
 		captions[i].Text = input
-		captions[i].Color = 0xFFA500        // orange
-		captions[i].OutlineColor = 0xFF0000 // red
+		captions[i].SetColor(0xFFA500)        // orange
+		captions[i].SetOutlineColor(0xFF0000) // red
 	}
 	return captions
 }

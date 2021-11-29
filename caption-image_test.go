@@ -96,94 +96,77 @@ func TestCaptionImageNoPW(t *testing.T) {
 }
 
 func TestCaptionImageNoUserOrPW(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
-		TopText:    "FOO",
-		BottomText: "BAR",
-	})
+	}).SetTopText("FOO").SetBottomText("BAR"))
 	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageInvalidAuth(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   "not_a_real_user_1234u173829",
 		Password:   "asdf",
-		TopText:    "TOP TEXT",
-		BottomText: "BOTTOM TEXT",
-	})
+	}).SetTopText("TOP TEXT").SetBottomText("BOTTOM TEXT"))
 	expectFailure(t, resp, err)
 }
 
 func TestCaptionImageTopTextOnly(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		TopText:    "Top Text",
-	})
+	}).SetTopText("Top Text"))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageBottomTextOnly(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		BottomText: "Bottom Text",
-	})
+	}).SetBottomText("Bottom Text"))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageTopAndBottomText(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		TopText:    "Top Text",
-		BottomText: "Bottom Text",
-	})
+	}).SetTopText("Top Text").SetBottomText("Bottom Text"))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageArial(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		TopText:    "Top Text",
-		BottomText: "Bottom Text",
-		Font:       imgflipgo.FontArial,
-	})
+	}).SetTopText("Top Text").SetBottomText("Bottom Text").SetFont(imgflipgo.FontArial))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageImpact(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		TopText:    "Top Text",
-		BottomText: "Bottom Text",
-		Font:       imgflipgo.FontImpact,
-	})
+	}).SetTopText("Top Text").SetBottomText("Bottom Text").SetFont(imgflipgo.FontImpact))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageMaxFontSize(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
-		TemplateID:    testTemplateID,
-		Username:      ImgflipAPIUsername,
-		Password:      ImgflipAPIPassword,
-		TopText:       "Top Text",
-		BottomText:    "Bottom Text",
-		MaxFontSizePx: uint(rand.Intn(int(imgflipgo.DefaultMaxFontSizePx))),
-	})
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+	}).SetTopText("Top Text").SetBottomText("Bottom Text").SetMaxFontSize(uint(rand.Intn(int(imgflipgo.DefaultMaxFontSizePx)))))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
@@ -219,7 +202,7 @@ func TestCaptionImageBottomTextbox(t *testing.T) {
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
-func TestCaptionmageTextBoxes(t *testing.T) {
+func TestCaptionImageTextBoxes(t *testing.T) {
 	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
@@ -238,12 +221,10 @@ func TestCaptionmageTextBoxes(t *testing.T) {
 }
 
 func TestCaptionImageTopBottomAndBoxes(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		TopText:    "This text should not be displayed (top)",
-		BottomText: "This text should not be displayed (bottom)",
 		TextBoxes: []imgflipgo.TextBox{
 			{
 				Text: "Top Text",
@@ -252,71 +233,85 @@ func TestCaptionImageTopBottomAndBoxes(t *testing.T) {
 				Text: "Bottom Text",
 			},
 		},
-	})
+	}).SetTopText("This text should not be displayed (top)").SetBottomText("This text should not be displayed (bottom)"))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageTopAndBox(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		TopText:    "This text should not be displayed (top)",
 		TextBoxes: []imgflipgo.TextBox{
 			{
 				Text: "Top Text",
 			},
 		},
-	})
+	}).SetTopText("This text should not be displayed (top)"))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageBottomAndBox(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		BottomText: "This text should not be displayed (bottom)",
 		TextBoxes: []imgflipgo.TextBox{
 			{},
 			{
 				Text: "Bottom Text",
 			},
 		},
-	})
+	}).SetBottomText("This text should not be displayed (bottom)"))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageTopAndBottomBox(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		TopText:    "This text should not be displayed (top)",
 		TextBoxes: []imgflipgo.TextBox{
 			{},
 			{
 				Text: "Bottom Text",
 			},
 		},
-	})
+	}).SetTopText("This text should not be displayed (top)"))
 	expectSuccess(t, resp, err)
 	t.Logf("See test image at %s", resp.Data.URL)
 }
 
 func TestCaptionImageBottomAndTopBox(t *testing.T) {
-	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+	resp, err := imgflipgo.CaptionImage((&imgflipgo.CaptionRequest{
 		TemplateID: testTemplateID,
 		Username:   ImgflipAPIUsername,
 		Password:   ImgflipAPIPassword,
-		BottomText: "This text should not be displayed (bottom)",
 		TextBoxes: []imgflipgo.TextBox{
 			{
 				Text: "Top Text",
 			},
+		},
+	}).SetBottomText("This text should not be displayed (bottom)"))
+	expectSuccess(t, resp, err)
+	t.Logf("See test image at %s", resp.Data.URL)
+}
+
+func TestCaptionImageColor(t *testing.T) {
+	resp, err := imgflipgo.CaptionImage(&imgflipgo.CaptionRequest{
+		TemplateID: testTemplateID,
+		Username:   ImgflipAPIUsername,
+		Password:   ImgflipAPIPassword,
+		TextBoxes: []imgflipgo.TextBox{
+			*((&imgflipgo.TextBox{
+				Text: "Orange text",
+			}).SetColor(0xFFA500)),
+			*((&imgflipgo.TextBox{
+				Text: "Red Outline",
+			}).SetOutlineColor(0xFF0000)),
 		},
 	})
 	expectSuccess(t, resp, err)

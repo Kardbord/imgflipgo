@@ -25,27 +25,51 @@ type TextBox struct {
 
 	// [optional] X coord of of the top left corner of the TextBox
 	// If specified, must also specify Y, Width, Height
-	X uint `json:"x,omitempty"`
+	X *uint `json:"x,omitempty"`
 
 	// [optional] Y coord of of the top left corner of the TextBox
 	// If specified, must also specify X, Width, Height
-	Y uint `json:"y,omitempty"`
+	Y *uint `json:"y,omitempty"`
 
 	// [optional] width of the TextBox
 	// If specified, must also specify X, Y, Height
-	Width uint `json:"width,omitempty"`
+	Width *uint `json:"width,omitempty"`
 
 	// [optional] height of the TextBox
 	// If specified, must also specify X, Y, Width
-	Height uint `json:"height,omitempty"`
+	Height *uint `json:"height,omitempty"`
 
 	// [optional] Hex color for Text
-	Color uint `json:"color"`
+	Color *uint `json:"color,omitempty"`
 
 	// [optional] Hex color for Text outline
-	OutlineColor uint `json:"outline_color"`
+	OutlineColor *uint `json:"outline_color,omitempty"`
 }
 
+func (t *TextBox) SetX(x uint) *TextBox {
+	t.X = &x
+	return t
+}
+func (t *TextBox) SetY(y uint) *TextBox {
+	t.Y = &y
+	return t
+}
+func (t *TextBox) SetWidth(width uint) *TextBox {
+	t.Width = &width
+	return t
+}
+func (t *TextBox) SetHeight(height uint) *TextBox {
+	t.Height = &height
+	return t
+}
+func (t *TextBox) SetColor(color uint) *TextBox {
+	t.Color = &color
+	return t
+}
+func (t *TextBox) SetOutlineColor(outlineColor uint) *TextBox {
+	t.OutlineColor = &outlineColor
+	return t
+}
 func (t *TextBox) TextJSONTag() (string, error) {
 	return getStructFieldJSONTag(reflect.TypeOf(t), "Text")
 }
@@ -91,17 +115,17 @@ type CaptionRequest struct {
 
 	// Top text for the meme. Do not use this parameter if you are using the
 	// boxes parameter below.
-	TopText string `schema:"text0,omitempty" json:"text0,omitempty"`
+	TopText *string `schema:"text0,omitempty" json:"text0,omitempty"`
 
 	// Bottom text for the meme. Do not use this parameter if you are using the
 	// boxes parameter below.
-	BottomText string `schema:"text1,omitempty" json:"text1,omitempty"`
+	BottomText *string `schema:"text1,omitempty" json:"text1,omitempty"`
 
 	// [optional] The font family to use for the text
-	Font Font `schema:"font,omitempty" json:"font,omitempty"`
+	Font *Font `schema:"font,omitempty" json:"font,omitempty"`
 
 	// [optional] Maximum font size in pixels. Defaults to 50px.
-	MaxFontSizePx uint `schema:"max_font_size,omitempty" json:"max_font_size,omitempty"`
+	MaxFontSizePx *uint `schema:"max_font_size,omitempty" json:"max_font_size,omitempty"`
 
 	// [optional] For creating memes with more than two text boxes, or for further
 	// customization. If TextBoxes is specified, TopText and BototmText will be ignored,
@@ -113,6 +137,22 @@ type CaptionRequest struct {
 	TextBoxes []TextBox `schema:"-" json:"boxes,omitempty"`
 }
 
+func (cr *CaptionRequest) SetTopText(topText string) *CaptionRequest {
+	cr.TopText = &topText
+	return cr
+}
+func (cr *CaptionRequest) SetBottomText(bottomText string) *CaptionRequest {
+	cr.BottomText = &bottomText
+	return cr
+}
+func (cr *CaptionRequest) SetFont(font Font) *CaptionRequest {
+	cr.Font = &font
+	return cr
+}
+func (cr *CaptionRequest) SetMaxFontSize(maxFontSizePx uint) *CaptionRequest {
+	cr.MaxFontSizePx = &maxFontSizePx
+	return cr
+}
 func (cr *CaptionRequest) TemplateIDJSONTag() (string, error) {
 	return getStructFieldJSONTag(reflect.TypeOf(cr), "TemplateID")
 }
@@ -201,12 +241,30 @@ func (cr CaptionRequest) CreateHTTPFormBody() (url.Values, error) {
 		}
 
 		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, textJSONTag), cr.TextBoxes[i].Text)
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, xJSONTag), fmt.Sprint(cr.TextBoxes[i].X))
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, yJSONTag), fmt.Sprint(cr.TextBoxes[i].Y))
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, widthJSONTag), fmt.Sprint(cr.TextBoxes[i].Width))
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, heightJSONTag), fmt.Sprint(cr.TextBoxes[i].Height))
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, colorJSONTag), fmt.Sprintf("#%06x", cr.TextBoxes[i].Color))
-		form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, outlineColorJSONTag), fmt.Sprintf("#%06x", cr.TextBoxes[i].OutlineColor))
+
+		if cr.TextBoxes[i].X != nil {
+			form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, xJSONTag), fmt.Sprint(*cr.TextBoxes[i].X))
+		}
+
+		if cr.TextBoxes[i].Y != nil {
+			form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, yJSONTag), fmt.Sprint(*cr.TextBoxes[i].Y))
+		}
+
+		if cr.TextBoxes[i].Width != nil {
+			form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, widthJSONTag), fmt.Sprint(*cr.TextBoxes[i].Width))
+		}
+
+		if cr.TextBoxes[i].Height != nil {
+			form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, heightJSONTag), fmt.Sprint(*cr.TextBoxes[i].Height))
+		}
+
+		if cr.TextBoxes[i].Color != nil {
+			form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, colorJSONTag), fmt.Sprintf("#%06x", *cr.TextBoxes[i].Color))
+		}
+
+		if cr.TextBoxes[i].OutlineColor != nil {
+			form.Add(fmt.Sprintf("%s[%d][%s]", textBoxesJSONTag, i, outlineColorJSONTag), fmt.Sprintf("#%06x", *cr.TextBoxes[i].OutlineColor))
+		}
 	}
 
 	return form, nil

@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/TannerKvarfordt/imgflipgo"
+	"github.com/Kardbord/imgflipgo"
 	"github.com/joho/godotenv"
 )
 

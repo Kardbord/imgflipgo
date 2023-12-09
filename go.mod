@@ -1,4 +1,4 @@
-module github.com/TannerKvarfordt/imgflipgo
+module github.com/Kardbord/imgflipgo
 
 go 1.17
 

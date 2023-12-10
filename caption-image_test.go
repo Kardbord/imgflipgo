@@ -6,7 +6,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/Kardbord/imgflipgo"
+	"github.com/Kardbord/imgflipgo/v2"
 	"github.com/joho/godotenv"
 )
 

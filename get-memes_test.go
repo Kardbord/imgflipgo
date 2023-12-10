@@ -3,7 +3,7 @@ package imgflipgo_test
 import (
 	"testing"
 
-	"github.com/Kardbord/imgflipgo"
+	"github.com/Kardbord/imgflipgo/v2"
 )
 
 func TestGetMemesResponse(t *testing.T) {

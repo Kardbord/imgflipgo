@@ -1,4 +1,4 @@
-module github.com/Kardbord/imgflipgo
+module github.com/Kardbord/imgflipgo/v2
 
 go 1.17
 
